@@ -11,11 +11,7 @@ if TYPE_CHECKING:
   VariableClauses = Dict[Variable, Set[Clause]]
   State = Union[int, float]
 
-  # An object of type MutationHistory is a list, where at each
-  # index i of the list is a dictionary mapping from clauses
-  # that were mutated by an assignment at decision level i
-  # to the variables that were 
-  MutationHistory = List[Dict[Clause, List[Variable]]]
+  MutationHistory = List[Set[Clause]]
   StateHistory = List[State]
 
 class Formula:
@@ -64,7 +60,7 @@ class Formula:
     # points to a literal in that variable in its head reference or
     # tail reference per decision level
     self.variable_clauses: VariableClauses = {}
-    self.mutation_history: MutationHistory = [{}]
+    self.mutation_history: MutationHistory = [set()]
     self.state_history: StateHistory = []
     self.unit_clauses: Set[Clause] = set()
     variables_in_representation: Set[Variable] = set()
@@ -178,7 +174,7 @@ class Formula:
       del self.variable_clauses[variable]
       for clause in stale_clauses:
         # update clause state
-        assigned_vars = clause.assign(self.assignment)
+        clause.assign(self.assignment)
 
         # update variable_clauses state (2/2)
         clause_state, head_var, tail_var = clause.get_state(self.assignment)
@@ -196,10 +192,8 @@ class Formula:
 
         # update mutation history
         while d >= len(self.mutation_history):
-          self.mutation_history.append({})
-        if clause not in self.mutation_history[-1]:
-          self.mutation_history[-1][clause] = []
-        self.mutation_history[-1][clause].extend(assigned_vars)
+          self.mutation_history.append(set())
+        self.mutation_history[-1].add(clause)
 
         # update unit_clauses
         if clause_state == Clause.UNIT:

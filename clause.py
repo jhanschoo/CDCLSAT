@@ -44,33 +44,21 @@ class Clause:
     else:
       self.reference_history.append((d, head, tail))
 
-  def assign(self: Clause, assignment: Assignment) -> List[Variable]:
+  def assign(self: Clause, assignment: Assignment) -> None:
     """Update the clause with a more specific assignment at a not lower decision level
 
     :param nu: An assignment of variables to values that is a
       superset of the assignments previously passed into previous
       `assign` invocations except for those assignments that have since
       been `backtrack`ed
-    :returns: A list of new assignments made to the clause at the
-      current (maximum) decision level. Note that this may not
-      capture all the new assignments in `assignment` at this decision
-      level unless the clause becomes unit or unsatisfied, since the
-      data structure is lazy. It may capture some old assignments.
     """
     # TODO: Return all variables at the current decision level
     head, tail = self.reference_history[-1][1:]
-    max_decision_level_assignments: List[Variable] = []
-    max_decision_level = self.reference_history[-1][0]
 
     head_lit = self.clause[head]
     head_item = assignment.get_item(abs(head_lit))
     while head < tail and head_item and head_lit * z2no(head_item[2]) == -abs(head_lit):
       head_decision_level = head_item[0]
-      if head_decision_level > max_decision_level:
-        max_decision_level = head_decision_level
-        max_decision_level_assignments = []
-      if head_decision_level == max_decision_level:
-        max_decision_level_assignments.append(head_item[1])
       head += 1
       self._update_history(head_decision_level, head, tail)
       head_lit = self.clause[head]
@@ -80,26 +68,10 @@ class Clause:
     tail_item = assignment.get_item(abs(tail_lit))
     while head < tail and tail_item and tail_lit * z2no(tail_item[2]) == -abs(tail_lit):
       tail_decision_level = tail_item[0]
-      if tail_decision_level > max_decision_level:
-        max_decision_level = tail_decision_level
-        max_decision_level_assignments = []
-      if tail_decision_level == max_decision_level:
-        max_decision_level_assignments.append(tail_item[1])
       tail -= 1
       self._update_history(tail_decision_level, head, tail)
       tail_lit = self.clause[tail]
       tail_item = assignment.get_item(abs(tail_lit))
-
-    # record assignment on unit clause if present
-    if head == tail and head_item:
-      head_decision_level = head_item[0]
-      if head_decision_level > max_decision_level:
-        max_decision_level = head_decision_level
-        max_decision_level_assignments = []
-      if head_decision_level == max_decision_level:
-        max_decision_level_assignments.append(head_item[1])
-
-    return max_decision_level_assignments
 
   def backtrack(self: Clause, d: DecisionLevel):
     """Backtrack the clause's assignments to a lower, nonnegative decision level `d`

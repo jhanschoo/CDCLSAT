@@ -91,7 +91,7 @@ class TestFormula(unittest.TestCase):
         formula.formula[0]
       ]),
     })
-    self.assertEqual(formula.mutation_history, [{}])
+    self.assertEqual(formula.mutation_history, [set()])
     self.assertEqual(formula.state_history, [Formula.UNRESOLVED])
     self.assertEqual(len(formula.assignment), 0)
     self.assertEqual(formula.unit_clauses, set())
@@ -136,10 +136,10 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ])
     ])
     self.assertEqual(formula.state_history, [Formula.UNRESOLVED])
     self.assertEqual(len(formula.assignment), 1)
@@ -185,10 +185,10 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ])
     ])
     self.assertEqual(formula.state_history, [Formula.UNRESOLVED, Formula.UNRESOLVED])
     self.assertEqual(len(formula.assignment), 2)
@@ -232,14 +232,14 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -285,17 +285,17 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -338,21 +338,21 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7],
-        formula.formula[7]: [7]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -395,21 +395,21 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -445,25 +445,25 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      },
-      {
-        formula.formula[1]: [1],
-        formula.formula[0]: [1]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set([
+        formula.formula[1],
+        formula.formula[0]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -500,26 +500,26 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      },
-      {
-        formula.formula[1]: [1],
-        formula.formula[0]: [1, 2],
-        formula.formula[2]: [2]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set([
+        formula.formula[1],
+        formula.formula[0],
+        formula.formula[2]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -551,26 +551,26 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      },
-      {
-        formula.formula[1]: [1, 3],
-        formula.formula[0]: [1, 2],
-        formula.formula[2]: [2, 3]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set([
+        formula.formula[1],
+        formula.formula[0],
+        formula.formula[2]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -597,28 +597,28 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      },
-      {
-        formula.formula[1]: [1, 3],
-        formula.formula[0]: [1, 2],
-        formula.formula[2]: [2, 3, 4],
-        formula.formula[3]: [4],
-        formula.formula[4]: [4]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set([
+        formula.formula[1],
+        formula.formula[0],
+        formula.formula[2],
+        formula.formula[3],
+        formula.formula[4]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -642,29 +642,29 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      },
-      {
-        formula.formula[1]: [1, 3],
-        formula.formula[0]: [1, 2],
-        formula.formula[2]: [2, 3, 4],
-        formula.formula[3]: [4, 5],
-        formula.formula[4]: [4],
-        formula.formula[5]: [5]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set([
+        formula.formula[1],
+        formula.formula[0],
+        formula.formula[2],
+        formula.formula[3],
+        formula.formula[4],
+        formula.formula[5]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -683,29 +683,29 @@ class TestFormula(unittest.TestCase):
     formula.assign(5, 6, 0, None) # TODO: antecedent
     self.assertEqual(formula.variable_clauses, {})
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      },
-      {
-        formula.formula[1]: [1, 3],
-        formula.formula[0]: [1, 2],
-        formula.formula[2]: [2, 3, 4],
-        formula.formula[3]: [4, 5],
-        formula.formula[4]: [4, 6],
-        formula.formula[5]: [5, 6]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set([
+        formula.formula[1],
+        formula.formula[0],
+        formula.formula[2],
+        formula.formula[3],
+        formula.formula[4],
+        formula.formula[5]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -746,21 +746,21 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      },
-      {
-        formula.formula[6]: [7, 9],
-        formula.formula[7]: [7, 9]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ]),
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -810,14 +810,14 @@ class TestFormula(unittest.TestCase):
       ]),
     })
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
@@ -829,17 +829,17 @@ class TestFormula(unittest.TestCase):
 
     formula.assign(3, 31, 0, None)
     self.assertEqual(formula.mutation_history, [
-      {
-        formula.formula[6]: [10],
-        formula.formula[7]: [10]
-      },
-      {},
-      {
-        formula.formula[4]: [21]
-      },
-      {
-        formula.formula[0]: [31]
-      }
+      set([
+        formula.formula[6],
+        formula.formula[7]
+      ]),
+      set(),
+      set([
+        formula.formula[4]
+      ]),
+      set([
+        formula.formula[0]
+      ])
     ])
     self.assertEqual(formula.state_history, [
       Formula.UNRESOLVED,
