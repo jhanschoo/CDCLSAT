@@ -143,24 +143,24 @@ def _build_clause(fuip: AssignmentItem, pred: Dict[AssignmentItem, Set[Assignmen
   seen: Set[AssignmentItem] = set()
   conflicting_vars: Set[AssignmentItem] = set()
   d = fuip[0]
-  max_sub_d: Optional[int] = None
+  max_sub_d: int = 0
   while stack:
     v = stack.pop()
     if v in seen:
       continue
     seen.add(v)
     if v == fuip or (v != KAPPA and v[0] != d):
-      if (v != KAPPA and v[0] != d) and (max_sub_d is None or max_sub_d < v[0]):
+      if (v != KAPPA and v[0] != d) and max_sub_d < v[0]:
         max_sub_d = v[0]
       conflicting_vars.add(v)
       continue
     for p in pred[v]:
       stack.append(p)
-  if max_sub_d is None:
-    max_sub_d = d - 1
   clause = [
     (-var if val == 1 else var) for _, var, val, _ in conflicting_vars
   ]
+  if d == 0:
+    max_sub_d = -1
   return max_sub_d, clause
 
 def fuip_analyzer(formula: PropagatingFormula) -> Tuple[DecisionLevel, List[List[Literal]]]:
