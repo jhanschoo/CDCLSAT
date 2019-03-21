@@ -2,6 +2,7 @@ from __future__ import annotations
 import io
 import unittest
 
+from fuip_analyzer import fuip_analyzer
 from propagating_formula import PropagatingFormula
 
 PHI1C = io.StringIO(
@@ -61,6 +62,9 @@ class TestPropagatingFormula(unittest.TestCase):
     self.assertEqual(formula.get_current_decision_level(), 5)
     self.assertEqual(formula.get_current_state(), formula.UNSATISFIED)
     self.assertEqual(len(formula.formula.assignment), 12)
+
+    print(fuip_analyzer(formula))
+
     formula.backtrack(4)
     self.assertEqual(formula.get_current_decision_level(), 4)
     self.assertEqual(formula.get_current_state(), formula.UNRESOLVED)

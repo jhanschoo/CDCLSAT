@@ -95,6 +95,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.state_history, [Formula.UNRESOLVED])
     self.assertEqual(len(formula.assignment), 0)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 0)
 
     formula.assign(0, 10, 0, None)
     self.assertEqual(formula.variable_clauses, {
@@ -144,6 +146,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.state_history, [Formula.UNRESOLVED])
     self.assertEqual(len(formula.assignment), 1)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 0)
     
     formula.assign(1, 8, 0, None)
     self.assertEqual(formula.variable_clauses, {
@@ -193,6 +197,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.state_history, [Formula.UNRESOLVED, Formula.UNRESOLVED])
     self.assertEqual(len(formula.assignment), 2)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 1)
 
     formula.assign(2, 21, 0, None)
     self.assertEqual(formula.variable_clauses, {
@@ -248,6 +254,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 3)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 2)
 
     formula.assign(3, 31, 0, None)
     self.assertEqual(formula.variable_clauses, {
@@ -305,6 +313,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 4)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 3)
 
     formula.assign(4, 7, 0, None)
     self.assertEqual(formula.variable_clauses, {
@@ -366,6 +376,8 @@ class TestFormula(unittest.TestCase):
       formula.formula[6],
       formula.formula[7]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 4)
 
     formula.assign(4, 9, 1, None) # TODO: antecedent
     self.assertEqual(formula.variable_clauses, {
@@ -420,6 +432,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 6)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 4)
 
     formula.assign(5, 1, 0, None)
     self.assertEqual(formula.variable_clauses, {
@@ -478,6 +492,8 @@ class TestFormula(unittest.TestCase):
       formula.formula[0],
       formula.formula[1]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 5)
 
     formula.assign(5, 2, 0, None) # TODO: antecedent
     self.assertEqual(formula.variable_clauses, {
@@ -533,6 +549,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unit_clauses, set([
       formula.formula[1]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 5)
 
     formula.assign(5, 3, 0, None) # TODO: antecedent
     self.assertEqual(formula.variable_clauses, {
@@ -584,6 +602,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unit_clauses, set([
       formula.formula[2]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 5)
 
     formula.assign(5, 4, 1, None) # TODO: antecedent
     self.assertEqual(formula.variable_clauses, {
@@ -633,6 +653,8 @@ class TestFormula(unittest.TestCase):
       formula.formula[3],
       formula.formula[4]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 5)
 
     formula.assign(5, 5, 0, None) # TODO: antecedent
     self.assertEqual(formula.variable_clauses, {
@@ -679,6 +701,8 @@ class TestFormula(unittest.TestCase):
       formula.formula[4],
       formula.formula[5]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 5)
 
     formula.assign(5, 6, 0, None) # TODO: antecedent
     self.assertEqual(formula.variable_clauses, {})
@@ -717,6 +741,10 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 12)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set([
+      formula.formula[5]
+    ]))
+    self.assertEqual(formula.decision_level, 5)
 
     formula.backtrack(4)
     self.assertEqual(formula.variable_clauses, {
@@ -771,6 +799,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 6)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 4)
 
     formula.backtrack(2)
     self.assertEqual(formula.variable_clauses, {
@@ -826,6 +856,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 3)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 2)
 
     formula.assign(3, 31, 0, None)
     self.assertEqual(formula.mutation_history, [
@@ -849,6 +881,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 4)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 3)
 
     formula.assign(4, 7, 0, None)
     self.assertEqual(formula.state_history, [
@@ -863,6 +897,8 @@ class TestFormula(unittest.TestCase):
       formula.formula[6],
       formula.formula[7]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 4)
 
     formula.assign(4, 9, 1, None)
     self.assertEqual(formula.state_history, [
@@ -874,6 +910,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 6)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 4)
 
     formula.assign(5, 1, 1, None)
     self.assertEqual(formula.state_history, [
@@ -886,6 +924,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 7)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 5)
 
     formula.assign(6, 5, 0, None)
     self.assertEqual(formula.state_history, [
@@ -901,6 +941,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unit_clauses, set([
       formula.formula[5]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 6)
 
     formula.assign(6, 6, 1, None)
     self.assertEqual(formula.state_history, [
@@ -916,6 +958,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unit_clauses, set([
       formula.formula[4]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 6)
 
     formula.assign(6, 4, 0, None)
     self.assertEqual(formula.state_history, [
@@ -929,6 +973,8 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 10)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 6)
 
     formula.assign(7, 2, 0, None)
     self.assertEqual(formula.state_history, [
@@ -945,6 +991,8 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unit_clauses, set([
       formula.formula[2]
     ]))
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 7)
 
     formula.assign(7, 3, 1, None)
     self.assertEqual(formula.state_history, [
@@ -959,3 +1007,5 @@ class TestFormula(unittest.TestCase):
     ])
     self.assertEqual(len(formula.assignment), 12)
     self.assertEqual(formula.unit_clauses, set())
+    self.assertEqual(formula.unsat_clauses, set())
+    self.assertEqual(formula.decision_level, 7)

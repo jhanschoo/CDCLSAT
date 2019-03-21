@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, List, Optional, Set, TextIO, TYPE_CHECKING, Union
+from typing import Dict, List, Optional, Set, TextIO, Tuple, TYPE_CHECKING, Union
 
 from clause import Clause
 from assignment import Assignment
@@ -61,8 +61,10 @@ class Formula:
     # tail reference per decision level
     self.variable_clauses: VariableClauses = {}
     self.mutation_history: MutationHistory = [set()]
+    self.unsat_clauses: Set[Clause] = set()
     self.state_history: StateHistory = []
     self.unit_clauses: Set[Clause] = set()
+    self.decision_level: DecisionLevel = 0
     variables_in_representation: Set[Variable] = set()
 
     num_vars: Optional[int] = None
@@ -164,11 +166,14 @@ class Formula:
       self.variable_clauses[tail_var].add(clause_object)
     if state == Clause.UNIT:
       self.unit_clauses.add(clause_object)
+    if state == Clause.UNSATISFIED:
+      self.unit_clauses.add(clause_object)
 
   def assign(self: Formula, d: DecisionLevel, variable: Variable, value: Value, antecedent: Antecedent) -> None:
     self.assignment.add_assignment(d, variable, value, antecedent)
     stale_clauses = self.variable_clauses.get(variable)
     state = self.state_history[-1]
+    self.decision_level = d
     if stale_clauses:
       # update variable_clauses state (1/2)
       del self.variable_clauses[variable]
@@ -201,6 +206,11 @@ class Formula:
         else:
           self.unit_clauses.discard(clause)
 
+        if clause_state == Clause.UNSATISFIED:
+          self.unsat_clauses.add(clause)
+        else:
+          self.unsat_clauses.discard(clause)
+
     # persist formula state
     if d >= len(self.state_history):
       self.state_history.append(state)
@@ -210,6 +220,7 @@ class Formula:
       self.state_history[-1] = state
 
   def backtrack(self: Formula, d: DecisionLevel) -> None:
+    self.decision_level = d
     while len(self.state_history) > d + 1:
       self.state_history.pop()
     self.assignment.backtrack(d)
@@ -233,11 +244,24 @@ class Formula:
           self.unit_clauses.add(clause)
         else:
           self.unit_clauses.discard(clause)
+        if clause_state == Clause.UNSATISFIED:
+          self.unsat_clauses.add(clause)
+        else:
+          self.unsat_clauses.discard(clause)
 
   def get_current_state(self: Formula) -> State:
     if self.base_state == Formula.UNSATISFIED:
       return Formula.UNSATISFIED
     return self.state_history[-1]
 
-  def get_assignment_object(self: Formula) -> Assignment:
+  def get_partial_assignment(self: Formula) -> Assignment:
     return self.assignment
+
+  def get_unit_clauses(self: Formula) -> Set[Clause]:
+    return self.unit_clauses
+
+  def get_unsat_clauses(self: Formula) -> Set[Clause]:
+    return self.unsat_clauses
+
+  def get_decision_level(self: Formula) -> DecisionLevel:
+    return self.decision_level

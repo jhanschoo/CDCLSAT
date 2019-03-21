@@ -6,13 +6,13 @@ if TYPE_CHECKING:
   from clause import Clause
 
   Antecedent = Optional[Clause]
-  Item = Tuple[DecisionLevel, Variable, Value, Antecedent]
+  AssignmentItem = Tuple[DecisionLevel, Variable, Value, Antecedent]
 
 class Assignment:
 
   def __init__(self: Assignment, variables: Set[Variable]) -> None:
-    self.history: List[Item] = []
-    self.current: Dict[Variable, Item] = {}
+    self.history: List[AssignmentItem] = []
+    self.current: Dict[Variable, AssignmentItem] = {}
     self.unassigned_variables = variables
     pass
 
@@ -49,7 +49,7 @@ class Assignment:
       return self.current[variable][3]
     return None
 
-  def get_item(self: Assignment, variable: Variable) -> Optional[Item]:
+  def get_item(self: Assignment, variable: Variable) -> Optional[AssignmentItem]:
     if variable in self.current:
       return self.current[variable]
     return None

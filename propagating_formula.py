@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Optional, TextIO, Tuple, TYPE_CHECKING
+from typing import List, Optional, Set, TextIO, Tuple, TYPE_CHECKING
 
 from formula import Formula
 
@@ -26,8 +26,8 @@ class PropagatingFormula:
     return abs(head_lit), 0 if head_lit < 0 else 1
 
   def propagate(self: PropagatingFormula) -> None:
-    while self.formula.unit_clauses and self.formula.UNRESOLVED:
-      clause = next(iter(self.formula.unit_clauses))
+    while self.formula.get_unit_clauses() and self.formula.UNRESOLVED:
+      clause = next(iter(self.formula.get_unit_clauses()))
       variable, value = self._sat_variable_value_from_unit_clause(clause)
       self.formula.assign(self.decision_level, variable, value, clause)
 
@@ -52,5 +52,14 @@ class PropagatingFormula:
     while len(self.decision_history) > d:
       self.decision_history.pop()
 
-  def get_assignment_object(self: PropagatingFormula) -> Assignment:
-    return self.formula.get_assignment_object()
+  def get_partial_assignment(self: PropagatingFormula) -> Assignment:
+    return self.formula.get_partial_assignment()
+
+  def get_unit_clauses(self: PropagatingFormula) -> Set[Clause]:
+    return self.formula.get_unit_clauses()
+
+  def get_unsat_clauses(self: PropagatingFormula) -> Set[Clause]:
+    return self.formula.get_unsat_clauses()
+
+  def get_decision_level(self: PropagatingFormula) -> DecisionLevel:
+    return self.formula.get_decision_level()

@@ -23,7 +23,7 @@ class Clause:
   UNRESOLVED: State = 0.5
   UNIT: State = -0.5
 
-  def __init__(self, clause: List[int]) -> None:
+  def __init__(self, clause: List[Literal]) -> None:
     """Construct a `Clause` object from a list specification of its literals
 
     :param clause: After construction,
@@ -31,7 +31,7 @@ class Clause:
     """
     if len(clause) == 0:
       raise Exception("input {} to Clause constructor is empty list".format(clause))
-    self.clause: List[int] = clause
+    self.clause: List[Literal] = clause
     self.reference_history: List[Tuple[DecisionLevel, HeadReference, TailReference]] = [(0, 0, len(clause) - 1)]
 
   def _update_history(self: Clause, d: DecisionLevel, head: HeadReference, tail: TailReference) -> None:
@@ -104,3 +104,10 @@ class Clause:
   def get_head_tail_lit(self: Clause) -> Tuple[Literal, Literal]:
     head, tail = self.reference_history[-1][1:]
     return (self.clause[head], self.clause[tail])
+
+  def get_assigned_vars(self: Clause, assignment: Assignment) -> List[Variable]:
+    vars = []
+    for l in self.clause:
+      if abs(l) in assignment:
+        vars.append(abs(l))
+    return vars
