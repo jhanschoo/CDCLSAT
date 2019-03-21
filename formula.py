@@ -169,6 +169,8 @@ class Formula:
     if state == Clause.UNSATISFIED:
       self.unit_clauses.add(clause_object)
 
+    # TODO: update history of all indexes.
+
   def assign(self: Formula, d: DecisionLevel, variable: Variable, value: Value, antecedent: Antecedent) -> None:
     self.assignment.add_assignment(d, variable, value, antecedent)
     stale_clauses = self.variable_clauses.get(variable)
