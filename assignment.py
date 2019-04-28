@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class Assignment:
 
   def __init__(self: Assignment, variables: Set[Variable]) -> None:
-    self.history: List[AssignmentItem] = []
+    self.history: List[List[AssignmentItem]] = []
     self.current: Dict[Variable, AssignmentItem] = {}
     self.unassigned_variables = variables
     pass
@@ -26,13 +26,16 @@ class Assignment:
     self.unassigned_variables.remove(variable)
     item = (d, variable, value, antecedent)
     self.current[variable] = item
-    self.history.append(item)
+    while len(self.history) <= d:
+      self.history.append([])
+    self.history[-1].append(item)
 
   def backtrack(self: Assignment, d: DecisionLevel) -> None:
-    while self.history and self.history[-1][0] > d:
-      _, variable, _, _ = self.history.pop()
-      del self.current[variable]
-      self.unassigned_variables.add(variable)
+    while len(self.history) > d + 1:
+      lvl_d_assignments = self.history.pop()
+      for _, variable, _, _ in lvl_d_assignments:
+        del self.current[variable]
+        self.unassigned_variables.add(variable)
 
   def get_value(self: Assignment, variable: Variable) -> Value:
     if variable in self.current:
@@ -47,6 +50,11 @@ class Assignment:
   def get_antecedent(self: Assignment, variable: Variable) -> Antecedent:
     if variable in self.current:
       return self.current[variable][3]
+    return None
+
+  def get_item_at_most_level(self: Assignment, variable: Variable, d: DecisionLevel) -> Optional[AssignmentItem]:
+    if variable in self.current and self.current[variable][0] <= d:
+      return self.current[variable]
     return None
 
   def get_item(self: Assignment, variable: Variable) -> Optional[AssignmentItem]:

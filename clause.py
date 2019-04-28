@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Tuple, TYPE_CHECKING, Union
+from typing import Dict, List, Tuple, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
   from shared_types import DecisionLevel, Literal, Value, Variable
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 def z2no(v: Value) -> int:
   """
   Transforms values in { False = 0, undefined = 0.5, True = 1 } to
-  values in { False = -1, undefined = 0, True = 1 }; function name is
+  values in { False = -1, undefined = 0, True = 1 }; function name means
   "zero to negative one"
   """
   return int(v * 2 - 1)
@@ -44,34 +44,46 @@ class Clause:
     else:
       self.reference_history.append((d, head, tail))
 
-  def assign(self: Clause, assignment: Assignment) -> None:
-    """Update the clause with a more specific assignment at a not lower decision level
+  def assign(self: Clause, assignment: Assignment, new_d: DecisionLevel) -> Dict[DecisionLevel, Tuple[State, Variable, Variable]]:
+    """Update the clause with a more specific assignment up to the current decision level
 
     :param nu: An assignment of variables to values that is a
       superset of the assignments previously passed into previous
       `assign` invocations except for those assignments that have since
       been `backtrack`ed
     """
-    # TODO: Return all variables at the current decision level
-    head, tail = self.reference_history[-1][1:]
 
-    head_lit = self.clause[head]
-    head_item = assignment.get_item(abs(head_lit))
-    while head < tail and head_item and head_lit * z2no(head_item[2]) == -abs(head_lit):
-      head_decision_level = head_item[0]
-      head += 1
-      self._update_history(head_decision_level, head, tail)
+    d_to_state: Dict[DecisionLevel, Tuple[State, Variable, Variable]] = {}
+
+    curr_d, head, tail = self.reference_history[-1]
+    while curr_d <= new_d:
+      mutated_at_level = False
       head_lit = self.clause[head]
-      head_item = assignment.get_item(abs(head_lit))
+      head_item = assignment.get_item_at_most_level(abs(head_lit), curr_d)
+      while head < tail and head_item and head_lit * z2no(head_item[2]) == -abs(head_lit):
+        mutated_at_level = True
+        head_decision_level = head_item[0]
+        head += 1
+        self._update_history(head_decision_level, head, tail)
+        head_lit = self.clause[head]
+        head_item = assignment.get_item_at_most_level(abs(head_lit), curr_d)
 
-    tail_lit = self.clause[tail]
-    tail_item = assignment.get_item(abs(tail_lit))
-    while head < tail and tail_item and tail_lit * z2no(tail_item[2]) == -abs(tail_lit):
-      tail_decision_level = tail_item[0]
-      tail -= 1
-      self._update_history(tail_decision_level, head, tail)
       tail_lit = self.clause[tail]
-      tail_item = assignment.get_item(abs(tail_lit))
+      tail_item = assignment.get_item_at_most_level(abs(tail_lit), curr_d)
+      while head < tail and tail_item and tail_lit * z2no(tail_item[2]) == -abs(tail_lit):
+        mutated_at_level = True
+        tail_decision_level = tail_item[0]
+        tail -= 1
+        self._update_history(tail_decision_level, head, tail)
+        tail_lit = self.clause[tail]
+        tail_item = assignment.get_item_at_most_level(abs(tail_lit), curr_d)
+
+      if mutated_at_level:
+        d_to_state[curr_d] = self.get_state(assignment, curr_d)
+
+      curr_d += 1
+
+    return d_to_state
 
   def backtrack(self: Clause, d: DecisionLevel):
     """Backtrack the clause's assignments to a lower, nonnegative decision level `d`
@@ -79,14 +91,17 @@ class Clause:
     while self.reference_history[-1][0] > d:
       self.reference_history.pop()
 
-  def get_state(self: Clause, assignment: Assignment) -> Tuple[State, Variable, Variable]:
-    head, tail = self.reference_history[-1][1:]
+  def get_state(self: Clause, assignment: Assignment, d: DecisionLevel) -> Tuple[State, Variable, Variable]:
+    i = -1
+    while d < self.reference_history[i][0]:
+      i -= 1
+    head, tail = self.reference_history[i][1:]
     head_lit = self.clause[head]
     tail_lit = self.clause[tail]
     head_var = abs(head_lit)
     tail_var = abs(tail_lit)
-    head_item = assignment.get_item(head_var)
-    tail_item = assignment.get_item(tail_var)
+    head_item = assignment.get_item_at_most_level(head_var, d)
+    tail_item = assignment.get_item_at_most_level(tail_var, d)
     if (head_item and head_lit * z2no(head_item[2]) == head_var) \
       or (tail_item and tail_lit * z2no(tail_item[2]) == tail_var):
       return (Clause.SATISFIED, head_var, tail_var)
