@@ -10,12 +10,12 @@ if TYPE_CHECKING:
   from assignment import Assignment
 
 class RandomBrancher(Brancher):
-
   @staticmethod
   def create(formula: PropagatingFormula) -> Brancher:
     return RandomBrancher(formula)
 
   def __init__(self: RandomBrancher, formula: PropagatingFormula) -> None:
+    self.decision_count = 0
     return None
 
   def record_resolved_lit(self, lit: Literal):
@@ -25,5 +25,6 @@ class RandomBrancher(Brancher):
     pass
 
   def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]:
+    self.decision_count += 1
     unassigned_variables = list(assignment.get_unassigned())
     return (random.choice(unassigned_variables), random.choice((0, 1)))

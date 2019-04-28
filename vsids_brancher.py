@@ -19,6 +19,7 @@ class VSIDSBrancher(Brancher):
     return VSIDSBrancher(formula)
 
   def __init__(self: VSIDSBrancher, formula: PropagatingFormula) -> None:
+    self.decision_count = 0
     raw_formula = formula.formula.formula
     var_counts: Dict[Variable, List[int]] = {}
     for clause in raw_formula:
@@ -69,6 +70,7 @@ class VSIDSBrancher(Brancher):
     self.bonus = math.ceil(self.bonus * 6 / 5)
 
   def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]:
+    self.decision_count += 1
     unassigned_variables = assignment.get_unassigned()
     max_var = 0
     max_score = 0

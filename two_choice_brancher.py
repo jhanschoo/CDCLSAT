@@ -16,6 +16,7 @@ class TwoChoiceBrancher(Brancher):
     return TwoChoiceBrancher(formula)
 
   def __init__(self: TwoChoiceBrancher, formula: PropagatingFormula) -> None:
+    self.decision_count = 0
     raw_formula = formula.formula.formula
     var_counts: Dict[Variable, int] = {}
     for clause in raw_formula:
@@ -35,6 +36,7 @@ class TwoChoiceBrancher(Brancher):
     pass
 
   def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]:
+    self.decision_count += 1
     unassigned_variables = list(assignment.get_unassigned())
     max_vars: List[Variable] = []
     max_count = 0

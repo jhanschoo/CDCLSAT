@@ -15,6 +15,7 @@ class ArbitraryBrancher(Brancher):
     return ArbitraryBrancher(formula)
 
   def __init__(self: ArbitraryBrancher, formula: PropagatingFormula) -> None:
+    self.decision_count = 0
     return None
 
   def record_resolved_lit(self, lit: Literal):
@@ -24,5 +25,6 @@ class ArbitraryBrancher(Brancher):
     pass
 
   def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]:
+    self.decision_count += 1
     unassigned_variables = assignment.get_unassigned()
     return (next(iter(unassigned_variables)), 0)
