@@ -21,7 +21,7 @@ def _build_conflict_dag(d: DecisionLevel, unsat_clauses: Set[Clause], assignment
   root: Optional[AssignmentItem] = None
   for clause in unsat_clauses:
     for var in clause.get_assigned_vars(assignment):
-      var_item = assignment.get_item(var)
+      var_item = assignment.get(var)
       if not var_item:
         raise Exception("variable {} should be present in assignment".format(var))
       if var_item not in succ:
@@ -42,7 +42,7 @@ def _build_conflict_dag(d: DecisionLevel, unsat_clauses: Set[Clause], assignment
     for v in antecedent_vars:
       if v == var_item[1]:
         continue
-      parent_var_item = assignment.get_item(v)
+      parent_var_item = assignment.get(v)
       if not parent_var_item:
         raise Exception("variable {} should be present in assignment".format(v))
       if parent_var_item not in succ:

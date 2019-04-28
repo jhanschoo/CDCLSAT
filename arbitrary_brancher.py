@@ -16,6 +16,6 @@ class ArbitraryBrancher(Brancher):
   def __init__(self: ArbitraryBrancher, formula: PropagatingFormula) -> None:
     return None
 
-  def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]: # TODO: implement
+  def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]:
     unassigned_variables = assignment.get_unassigned()
     return (next(iter(unassigned_variables)), 0)

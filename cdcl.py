@@ -23,6 +23,8 @@ def cdcl(file_object: TextIO) -> State:
     variable, value = brancher.make_decision(formula.get_partial_assignment())
     formula.assign(variable, value)
     while formula.get_current_state() == PropagatingFormula.UNSATISFIED:
+      if formula.get_decision_level() == 0:
+        return UNSATISFIED
       new_decision_level, new_clauses = conflict_analyzer(formula)
       if new_decision_level < 0:
         return UNSATISFIED

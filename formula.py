@@ -156,6 +156,27 @@ class Formula:
     clause_object = Clause(clause)
     clause_object.assign(self.assignment)
     self.formula.append(clause_object)
+
+    # update mutation history and state history
+    old_head_var, old_tail_var = clause_object.get_head_tail_var()
+    was_valid = False
+    was_unsat = len(clause) == 0
+    for d in range(0, self.decision_level + 1):
+      clause_object.assign_decision_level(self.assignment, d)
+      state, head_var, tail_var = clause_object.get_state(self.assignment.get_assignment_at_level(d))
+      if head_var != old_head_var or tail_var != old_tail_var:
+        self.mutation_history[d].add(clause_object)
+
+      # can actually be commented out since we never make
+      # decisions while the formila is valid or unsat
+      was_valid = was_valid or state == Clause.SATISFIED
+      was_unsat = was_unsat or state == Clause.UNSATISFIED
+      if self.state_history[d] == Formula.SATISFIED and not was_valid:
+        self.state_history[d] = Formula.UNRESOLVED
+      if was_unsat:
+        self.state_history[d] = Formula.UNSATISFIED
+
+    # update current state
     state, head_var, tail_var = clause_object.get_state(self.assignment)
     if state == Clause.UNRESOLVED or state == Clause.UNIT:
       if head_var not in self.variable_clauses:

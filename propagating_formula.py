@@ -33,6 +33,7 @@ class PropagatingFormula:
 
   def add_clause(self: PropagatingFormula, clause: List[int]) -> None:
     self.formula.add_clause(clause)
+    self.propagate()
 
   def assign(self: PropagatingFormula, variable: Variable, value: Value) -> None:
     self.decision_level += 1

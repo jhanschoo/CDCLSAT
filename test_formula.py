@@ -379,7 +379,7 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unsat_clauses, set())
     self.assertEqual(formula.decision_level, 4)
 
-    formula.assign(4, 9, 1, None) # TODO: antecedent
+    formula.assign(4, 9, 1, None)
     self.assertEqual(formula.variable_clauses, {
       1: set([
         formula.formula[1],
@@ -495,7 +495,7 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unsat_clauses, set())
     self.assertEqual(formula.decision_level, 5)
 
-    formula.assign(5, 2, 0, None) # TODO: antecedent
+    formula.assign(5, 2, 0, None)
     self.assertEqual(formula.variable_clauses, {
       3: set([
         formula.formula[1],
@@ -552,7 +552,7 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unsat_clauses, set())
     self.assertEqual(formula.decision_level, 5)
 
-    formula.assign(5, 3, 0, None) # TODO: antecedent
+    formula.assign(5, 3, 0, None)
     self.assertEqual(formula.variable_clauses, {
       4: set([
         formula.formula[2],
@@ -605,7 +605,7 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unsat_clauses, set())
     self.assertEqual(formula.decision_level, 5)
 
-    formula.assign(5, 4, 1, None) # TODO: antecedent
+    formula.assign(5, 4, 1, None)
     self.assertEqual(formula.variable_clauses, {
       5: set([
         formula.formula[3],
@@ -656,7 +656,7 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unsat_clauses, set())
     self.assertEqual(formula.decision_level, 5)
 
-    formula.assign(5, 5, 0, None) # TODO: antecedent
+    formula.assign(5, 5, 0, None)
     self.assertEqual(formula.variable_clauses, {
       6: set([
         formula.formula[4],
@@ -704,7 +704,7 @@ class TestFormula(unittest.TestCase):
     self.assertEqual(formula.unsat_clauses, set())
     self.assertEqual(formula.decision_level, 5)
 
-    formula.assign(5, 6, 0, None) # TODO: antecedent
+    formula.assign(5, 6, 0, None)
     self.assertEqual(formula.variable_clauses, {})
     self.assertEqual(formula.mutation_history, [
       set([

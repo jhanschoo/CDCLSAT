@@ -1,9 +1,9 @@
 from __future__ import annotations
-from typing import List, Tuple, TYPE_CHECKING, Union
+from typing import Dict, List, Tuple, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
   from shared_types import DecisionLevel, Literal, Value, Variable
-  from assignment import Assignment
+  from assignment import AssignmentItem, Assignment
 
   HeadReference = int
   TailReference = int
@@ -44,7 +44,10 @@ class Clause:
     else:
       self.reference_history.append((d, head, tail))
 
-  def assign(self: Clause, assignment: Assignment) -> None:
+  def assign_decision_level(self: Clause, assignment: Assignment, d: DecisionLevel) -> None:
+    self.assign(assignment.get_assignment_at_level(d))
+
+  def assign(self: Clause, assignment: Union[Dict[Variable, AssignmentItem], Assignment]) -> None:
     """Update the clause with a more specific assignment at a not lower decision level
 
     :param nu: An assignment of variables to values that is a
@@ -56,22 +59,22 @@ class Clause:
     head, tail = self.reference_history[-1][1:]
 
     head_lit = self.clause[head]
-    head_item = assignment.get_item(abs(head_lit))
+    head_item = assignment.get(abs(head_lit))
     while head < tail and head_item and head_lit * z2no(head_item[2]) == -abs(head_lit):
       head_decision_level = head_item[0]
       head += 1
       self._update_history(head_decision_level, head, tail)
       head_lit = self.clause[head]
-      head_item = assignment.get_item(abs(head_lit))
+      head_item = assignment.get(abs(head_lit))
 
     tail_lit = self.clause[tail]
-    tail_item = assignment.get_item(abs(tail_lit))
+    tail_item = assignment.get(abs(tail_lit))
     while head < tail and tail_item and tail_lit * z2no(tail_item[2]) == -abs(tail_lit):
       tail_decision_level = tail_item[0]
       tail -= 1
       self._update_history(tail_decision_level, head, tail)
       tail_lit = self.clause[tail]
-      tail_item = assignment.get_item(abs(tail_lit))
+      tail_item = assignment.get(abs(tail_lit))
 
   def backtrack(self: Clause, d: DecisionLevel):
     """Backtrack the clause's assignments to a lower, nonnegative decision level `d`
@@ -79,14 +82,14 @@ class Clause:
     while self.reference_history[-1][0] > d:
       self.reference_history.pop()
 
-  def get_state(self: Clause, assignment: Assignment) -> Tuple[State, Variable, Variable]:
+  def get_state(self: Clause, assignment: Union[Dict[Variable, AssignmentItem], Assignment]) -> Tuple[State, Variable, Variable]:
     head, tail = self.reference_history[-1][1:]
     head_lit = self.clause[head]
     tail_lit = self.clause[tail]
     head_var = abs(head_lit)
     tail_var = abs(tail_lit)
-    head_item = assignment.get_item(head_var)
-    tail_item = assignment.get_item(tail_var)
+    head_item = assignment.get(head_var)
+    tail_item = assignment.get(tail_var)
     if (head_item and head_lit * z2no(head_item[2]) == head_var) \
       or (tail_item and tail_lit * z2no(tail_item[2]) == tail_var):
       return (Clause.SATISFIED, head_var, tail_var)

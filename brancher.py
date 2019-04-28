@@ -10,11 +10,11 @@ if TYPE_CHECKING:
 
 class Brancher(ABC):
   
-  @abstractmethod
   @staticmethod
+  @abstractmethod
   def create(formula: PropagatingFormula) -> Brancher:
     pass
 
   @abstractmethod
-  def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]: # TODO: implement
+  def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]: # : implement
     pass
