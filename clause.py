@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 def z2no(v: Value) -> int:
   """
   Transforms values in { False = 0, undefined = 0.5, True = 1 } to
-  values in { False = -1, undefined = 0, True = 1 }; function name is
+  values in { False = -1, undefined = 0, True = 1 }; function name means
   "zero to negative one"
   """
   return int(v * 2 - 1)
@@ -55,8 +55,8 @@ class Clause:
       `assign` invocations except for those assignments that have since
       been `backtrack`ed
     """
-    # TODO: Return all variables at the current decision level
     head, tail = self.reference_history[-1][1:]
+
 
     head_lit = self.clause[head]
     head_item = assignment.get(abs(head_lit))

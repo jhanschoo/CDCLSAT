@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 
 class Formula:
   """
-
   The `Formula` class is used to represent a CNF formula and a partial
   assignment on it at various decision levels. Under a legal
   construction of a Formula object and invocation of mutation methods,
@@ -34,6 +33,16 @@ class Formula:
 
   Calling a mutation method when `self.base_state` is not `UNRESOLVED`
   gives undefined behavior.
+
+  :param formula: A representation of the CNF
+  :param base_state: maintains whether the formula, given the current assignment, is unresolved, satisfied, or unsatisfied
+  :param variable_clauses: A map of variables to clauses that have them as their head or tail
+  :param mutation_history: A list of what clauses have been mutated per each decision level
+  :param unsat_clauses: A set of clauses that are unsatisfied given the current assignment
+  :param state_history: A list of the state (i.e. unresolved, satisfied, or unsatisfied) of the formula at each decision level
+  :param unit_clauses: A set of clauses that are unit given the current assignment
+  :param decision_level: The current decision level
+  :param assignment: An object maintaining the assignment of variables made at each decision level
   """
 
   SATISFIED: State = 1
@@ -132,6 +141,8 @@ class Formula:
     self.assignment: Assignment = Assignment(variables_in_representation)
 
   def _add_base_clause(self: Formula, clause: List[int]) -> None:
+    """Add a clause to the formula, only during initialization.
+    """
     clause_object = Clause(clause)
     self.formula.append(clause_object)
     head_var, tail_var = clause_object.get_head_tail_var()
@@ -145,13 +156,11 @@ class Formula:
       self.unit_clauses.add(clause_object)
 
   def add_clause(self: Formula, clause: List[int]) -> None:
-    """
+    """Add a clause to the formula after initialization.
 
     :param clause: a list of `Literal`s that are contained in the clause;
       each variable must appear in `clause` at most once. `clause` cannot contain literals
       in variables not already present in the representation.
-    :param assignment: the current assignment that the clause should be
-      aware of
     """
     clause_object = Clause(clause)
     clause_object.assign(self.assignment)
@@ -185,14 +194,23 @@ class Formula:
       if tail_var not in self.variable_clauses:
         self.variable_clauses[tail_var] = set()
       self.variable_clauses[tail_var].add(clause_object)
+    
+    # update unit clauses
     if state == Clause.UNIT:
       self.unit_clauses.add(clause_object)
-    if state == Clause.UNSATISFIED:
-      self.unit_clauses.add(clause_object)
 
-    # TODO: update history of all indexes.
+    # update unsat clauses
+    if state == Clause.UNSATISFIED:
+      self.unsat_clauses.add(clause_object)
 
   def assign(self: Formula, d: DecisionLevel, variable: Variable, value: Value, antecedent: Antecedent) -> None:
+    """Record an assignment to the formula
+
+    :param d: the decision level at which the assignment was made
+    :param variable: the variable being assigned
+    :param value: the value the variable is being assigned to
+    :param antecedent: the antecedent that implied the assignment, if applicable
+    """
     self.assignment.add_assignment(d, variable, value, antecedent)
     stale_clauses = self.variable_clauses.get(variable)
     state = self.state_history[-1]
@@ -243,6 +261,10 @@ class Formula:
       self.state_history[-1] = state
 
   def backtrack(self: Formula, d: DecisionLevel) -> None:
+    """Backtrack to a previous decision level
+
+    :param d: a decision level smaller than the current decision level
+    """
     self.decision_level = d
     while len(self.state_history) > d + 1:
       self.state_history.pop()
