@@ -26,4 +26,4 @@ class RandomBrancher(Brancher):
 
   def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]:
     unassigned_variables = list(assignment.get_unassigned())
-    return (random.choice(unassigned_variables), 0)
+    return (random.choice(unassigned_variables), random.choice((0, 1)))
