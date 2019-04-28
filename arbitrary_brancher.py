@@ -1,9 +1,10 @@
 from __future__ import annotations
+from typing import List, Tuple, TYPE_CHECKING
+
 from brancher import Brancher
-from typing import Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-  from shared_types import Value, Variable
+  from shared_types import Literal, Value, Variable
   from propagating_formula import PropagatingFormula
   from assignment import Assignment
 
@@ -15,6 +16,12 @@ class ArbitraryBrancher(Brancher):
 
   def __init__(self: ArbitraryBrancher, formula: PropagatingFormula) -> None:
     return None
+
+  def record_resolved_lit(self, lit: Literal):
+    pass
+
+  def record_learned_clause(self, clause: List[Literal]):
+    pass
 
   def make_decision(self, assignment: Assignment) -> Tuple[Variable, Value]:
     unassigned_variables = assignment.get_unassigned()

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Dict, List, Optional, Set, Tuple, TYPE_CHECKING
+from brancher import Brancher
 
 if TYPE_CHECKING:
   from shared_types import DecisionLevel, Literal
@@ -138,7 +139,7 @@ def _build_dominator_graph(root: Vertex, succ: Dict[AssignmentItem, Set[Assignme
         dom[v] = parent[w]
   return dom
 
-def _build_clause(fuip: AssignmentItem, pred: Dict[AssignmentItem, Set[AssignmentItem]]) -> Tuple[DecisionLevel, List[Literal]]:
+def _build_clause(fuip: AssignmentItem, pred: Dict[AssignmentItem, Set[AssignmentItem]], brancher: Brancher) -> Tuple[DecisionLevel, List[Literal]]:
   stack: List[AssignmentItem] = [KAPPA]
   seen: Set[AssignmentItem] = set()
   conflicting_vars: Set[AssignmentItem] = set()
@@ -148,13 +149,15 @@ def _build_clause(fuip: AssignmentItem, pred: Dict[AssignmentItem, Set[Assignmen
     v = stack.pop()
     if v in seen:
       continue
+    if v != KAPPA:
+      brancher.record_resolved_lit(v[1])
     seen.add(v)
     if v == fuip or (v != KAPPA and v[0] != d):
       if (v != KAPPA and v[0] != d) and max_sub_d < v[0]:
         max_sub_d = v[0]
       conflicting_vars.add(v)
       continue
-    for p in pred[v]:
+    for p in pred.get(v, set()):
       stack.append(p)
   clause = [
     (-var if val == 1 else var) for _, var, val, _ in conflicting_vars
@@ -163,10 +166,10 @@ def _build_clause(fuip: AssignmentItem, pred: Dict[AssignmentItem, Set[Assignmen
     max_sub_d = -1
   return max_sub_d, clause
 
-def fuip_analyzer(formula: PropagatingFormula) -> Tuple[DecisionLevel, List[List[Literal]]]:
+def fuip_analyzer(formula: PropagatingFormula, brancher: Brancher) -> Tuple[DecisionLevel, List[List[Literal]]]:
   root, succ = _build_conflict_dag(formula.get_decision_level(), formula.get_unsat_clauses(), formula.get_partial_assignment())
   dom = _build_dominator_graph(root, succ)
   fuip = dom[KAPPA]
   pred = _build_pred(succ)
-  backtrack_d, clause = _build_clause(fuip, pred)
+  backtrack_d, clause = _build_clause(fuip, pred, brancher)
   return backtrack_d, [clause]
