@@ -15,7 +15,7 @@ class ArbitraryBrancher(Brancher):
     return ArbitraryBrancher(formula)
 
   def __init__(self: ArbitraryBrancher, formula: PropagatingFormula) -> None:
-    self.decision_count = 0
+    Brancher.__init__(self)
     return None
 
   def record_resolved_lit(self, lit: Literal):

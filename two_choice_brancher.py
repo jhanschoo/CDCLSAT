@@ -16,7 +16,7 @@ class TwoChoiceBrancher(Brancher):
     return TwoChoiceBrancher(formula)
 
   def __init__(self: TwoChoiceBrancher, formula: PropagatingFormula) -> None:
-    self.decision_count = 0
+    Brancher.__init__(self)
     raw_formula = formula.formula.formula
     var_counts: Dict[Variable, int] = {}
     for clause in raw_formula:

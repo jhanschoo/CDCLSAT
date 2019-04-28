@@ -9,7 +9,11 @@ if TYPE_CHECKING:
   from assignment import Assignment
 
 class Brancher(ABC):
-  
+
+  @abstractmethod
+  def __init__(self):
+    self.decision_count = 0
+
   @staticmethod
   @abstractmethod
   def create(formula: PropagatingFormula) -> Brancher:

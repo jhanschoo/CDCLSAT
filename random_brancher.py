@@ -15,7 +15,7 @@ class RandomBrancher(Brancher):
     return RandomBrancher(formula)
 
   def __init__(self: RandomBrancher, formula: PropagatingFormula) -> None:
-    self.decision_count = 0
+    Brancher.__init__(self)
     return None
 
   def record_resolved_lit(self, lit: Literal):

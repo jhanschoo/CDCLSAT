@@ -19,7 +19,7 @@ class VSIDSBrancher(Brancher):
     return VSIDSBrancher(formula)
 
   def __init__(self: VSIDSBrancher, formula: PropagatingFormula) -> None:
-    self.decision_count = 0
+    Brancher.__init__(self)
     raw_formula = formula.formula.formula
     var_counts: Dict[Variable, List[int]] = {}
     for clause in raw_formula:
